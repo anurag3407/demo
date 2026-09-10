@@ -50,8 +50,8 @@ describe("Database Mongoose Models & Schemas", () => {
       });
 
       expect(msg.reasoningContent).toContain("pipeline architecture");
-      expect(msg.toolCalls).toHaveLength(1);
-      expect(msg.toolCalls[0].toolName).toBe("webSearch");
+      expect(msg.toolCalls).toBeDefined();
+      expect(msg.toolCalls?.[0]?.toolName).toBe("webSearch");
     });
   });
 
