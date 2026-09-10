@@ -1,25 +1,30 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Chatbot Landing & Showcase Page", () => {
-  test("loads the landing page successfully with title and sections", async ({
+  test("loads the landing page successfully with hero and feature sections", async ({
     page,
   }) => {
     await page.goto("/");
 
-    // Verify main header
+    // Verify main platform header
     await expect(
-      page.getByRole("heading", { name: "Aceternity UI & Shadcn Components" })
+      page.getByRole("heading", {
+        name: "Enterprise Multi-Model AI Chatbot Platform",
+      })
     ).toBeVisible();
 
     // Verify Card Stack section exists
     await expect(
-      page.getByRole("heading", { name: "Card Stack Component" })
+      page.getByRole("heading", { name: "Interactive Card Stack" })
     ).toBeVisible();
 
     // Verify Tooltip Card section exists
     await expect(
-      page.getByRole("heading", { name: "Tooltip Card Component" })
+      page.getByRole("heading", { name: "Cursor Tracking Tooltip Cards" })
     ).toBeVisible();
+
+    // Verify Launch Chatbot button
+    await expect(page.getByRole("link", { name: "Launch Chatbot" })).toBeVisible();
   });
 
   test("renders card stack with content and testimonial cards", async ({
@@ -46,6 +51,28 @@ test.describe("Chatbot Landing & Showcase Page", () => {
     await expect(
       page.getByText("world's most comprehensive and broadly adopted cloud platform")
     ).toBeVisible();
+  });
+
+  test("navigates to /chat and renders the interactive AI interface", async ({
+    page,
+  }) => {
+    await page.goto("/chat");
+
+    // Verify empty state prompt
+    await expect(
+      page.getByRole("heading", { name: "How can I help you today?" })
+    ).toBeVisible();
+
+    // Verify New Chat button
+    await expect(page.getByRole("button", { name: "New Chat" })).toBeVisible();
+
+    // Verify model selector displays Nex N2.5 Pro
+    const modelSelect = page.getByRole("combobox");
+    await expect(modelSelect).toBeVisible();
+    await expect(modelSelect).toHaveValue("nex-agi/nex-n2.5-pro:free");
+
+    // Verify prompt input box
+    await expect(page.getByPlaceholder(/Ask nex-n2.5-pro:free anything/i)).toBeVisible();
   });
 
   test("verifies API health check endpoint", async ({ request }) => {
