@@ -9,7 +9,30 @@ export interface ModelClientConfig {
   maxTokens?: number;
 }
 
+let proxyInitialized = false;
+function setupProxyIfNeeded() {
+  if (proxyInitialized) return;
+  proxyInitialized = true;
+
+  const proxyUrl =
+    process.env.HTTPS_PROXY ||
+    process.env.HTTP_PROXY ||
+    (process.env.NODE_ENV !== "production" ? "http://127.0.0.1:8181" : undefined);
+
+  if (proxyUrl) {
+    try {
+      const { ProxyAgent, setGlobalDispatcher } = require("undici");
+      setGlobalDispatcher(new ProxyAgent(proxyUrl));
+      console.log(`[AI Factory] Global dispatcher configured with proxy: ${proxyUrl}`);
+    } catch {
+      // ignore
+    }
+  }
+}
+
 export function createLangChainClient(config?: ModelClientConfig): ChatOpenAI {
+  setupProxyIfNeeded();
+
   const apiKey =
     config?.apiKey ||
     process.env.OPENROUTER_API_KEY ||
@@ -31,6 +54,7 @@ export function createLangChainClient(config?: ModelClientConfig): ChatOpenAI {
   }
 
   return new ChatOpenAI({
+    apiKey: apiKey,
     openAIApiKey: apiKey,
     configuration: {
       baseURL: baseUrl,

@@ -75,6 +75,28 @@ test.describe("Chatbot Landing & Showcase Page", () => {
     await expect(page.getByPlaceholder(/Ask nex-n2.5-pro:free anything/i)).toBeVisible();
   });
 
+  test("navigates to /terminal and interacts with the Terminal CLI shell", async ({
+    page,
+  }) => {
+    await page.goto("/terminal");
+
+    // Verify Terminal title & prompt
+    await expect(page.locator("text=VIBE_OS_CLI")).toBeVisible();
+    await expect(page.locator("text=guest@vibechat:~$")).toBeVisible();
+
+    // Verify Theme button exists
+    const themeBtn = page.getByRole("button", { name: /THEME:/i });
+    await expect(themeBtn).toBeVisible();
+
+    // Type 'help' and submit
+    const input = page.locator("input");
+    await input.fill("help");
+    await input.press("Enter");
+
+    // Verify help text appears in terminal output
+    await expect(page.locator("text=AVAILABLE SYSTEM UTILITIES:")).toBeVisible();
+  });
+
   test("verifies API health check endpoint", async ({ request }) => {
     const response = await request.get("/api/health");
     expect([200, 503]).toContain(response.status());

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import {
   Sparkles,
   Send,
@@ -437,6 +438,15 @@ export default function ChatInterface() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-1.5">
+            <Link href="/terminal">
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden sm:flex items-center gap-1.5 text-xs font-mono border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 rounded-lg"
+              >
+                &gt;_ CLI
+              </Button>
+            </Link>
             <Button
               variant="outline"
               size="sm"
